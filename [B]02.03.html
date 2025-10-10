@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <title>B02.03</title>
+  <style>
+    .selected { background: yellow; }
+    p { margin: 6px 0; }
+    span { margin-right: 6px; display: inline-block; }
+  </style>
+</head>
+<body>
+  <h2>Редагування окремих речень у тексті</h2>
+
+  <div id="text">
+    <p>
+      <span>Перше речення першого параграфа.</span>
+      <span>Друге речення першого параграфа.</span>
+    </p>
+    <p>
+      <span>Перше речення другого параграфа.</span>
+    </p>
+  </div>
+
+  <hr>
+
+  <!-- A. Додати параграф з одним реченням -->
+  <div>
+    <h3>a) Додати параграф (1 речення)</h3>
+    <input id="newParaSentence" type="text" placeholder="Текст речення" />
+    <button id="addParagraphBtn">Додати параграф</button>
+  </div>
+
+  <!-- B. Виділити задане речення -->
+  <div>
+    <h3>b) Виділити задане речення</h3>
+    <input id="paraIndexForSelect" type="number" min="1" placeholder="№ параграфа (1..)" />
+    <input id="sentIndexForSelect" type="number" min="1" placeholder="№ речення (1..)" />
+    <button id="selectSentenceBtn">Виділити</button>
+  </div>
+
+  <!-- C. Зняти виділення -->
+  <div>
+    <h3>c) Зняти виділення</h3>
+    <button id="clearSelectionBtn">Зняти виділення</button>
+  </div>
+
+  <!-- D. Змінити текст виділеного -->
+  <div>
+    <h3>d) Змінити текст виділеного речення</h3>
+    <input id="editSelectedText" type="text" placeholder="Новий текст" />
+    <button id="editSelectedBtn">Змінити</button>
+  </div>
+
+  <!-- E. Додати нове речення перед виділеним / у кінець останнього параграфа -->
+  <div>
+    <h3>e) Додати речення перед виділеним (або в кінець останнього параграфа)</h3>
+    <input id="newSentenceText" type="text" placeholder="Текст нового речення" />
+    <button id="addBeforeSelectedBtn">Додати</button>
+  </div>
+
+  <!-- F. Видалити виділене речення (+ видалити порожній параграф) -->
+  <div>
+    <h3>f) Видалити виділене речення</h3>
+    <button id="deleteSelectedBtn">Видалити речення</button>
+  </div>
+
+  <!-- G. Видалити заданий параграф -->
+  <div>
+    <h3>g) Видалити заданий параграф</h3>
+    <input id="paraIndexForDelete" type="number" min="1" placeholder="№ параграфа (1..)" />
+    <button id="deleteParagraphBtn">Видалити параграф</button>
+  </div>
+
+  <script>
+    const textRoot = document.getElementById('text');
+    let selectedSpan = null;
+
+    function getParagraph(n) {
+      const paras = textRoot.querySelectorAll('p');
+      return paras[n - 1] || null;
+    }
+
+    function getSentence(pEl, s) {
+      if (!pEl) return null;
+      const spans = pEl.querySelectorAll('span');
+      return spans[s - 1] || null;
+    }
+
+    function selectSpan(span) {
+      clearSelection();
+      if (span) {
+        span.classList.add('selected');
+        selectedSpan = span;
+      }
+    }
+
+    function clearSelection() {
+      if (selectedSpan) {
+        selectedSpan.classList.remove('selected');
+        selectedSpan = null;
+      }
+    }
+
+    function ensureLastParagraphExists() {
+      let last = textRoot.querySelector('p:last-of-type');
+      if (!last) {
+        last = document.createElement('p');
+        textRoot.appendChild(last);
+      }
+      return last;
+    }
+
+    // a) Додати параграф із одним реченням
+    document.getElementById('addParagraphBtn').addEventListener('click', () => {
+      const val = document.getElementById('newParaSentence').value.trim();
+      if (!val) { alert('Введіть текст речення'); return; }
+      const p = document.createElement('p');
+      const s = document.createElement('span');
+      s.textContent = val;
+      p.appendChild(s);
+      textRoot.appendChild(p);
+      document.getElementById('newParaSentence').value = '';
+    });
+
+    // b) Виділити задане речення
+    document.getElementById('selectSentenceBtn').addEventListener('click', () => {
+      const pIdx = parseInt(document.getElementById('paraIndexForSelect').value, 10);
+      const sIdx = parseInt(document.getElementById('sentIndexForSelect').value, 10);
+      const p = getParagraph(pIdx);
+      const s = getSentence(p, sIdx);
+      if (!s) { alert('Параграф або речення не знайдено'); return; }
+      selectSpan(s);
+    });
+
+    // c) Зняти виділення
+    document.getElementById('clearSelectionBtn').addEventListener('click', () => {
+      clearSelection();
+    });
+
+    // d) Змінити текст виділеного речення
+    document.getElementById('editSelectedBtn').addEventListener('click', () => {
+      const val = document.getElementById('editSelectedText').value.trim();
+      if (!selectedSpan) { alert('Немає виділеного речення'); return; }
+      if (!val) { alert('Введіть новий текст'); return; }
+      selectedSpan.textContent = val;
+      document.getElementById('editSelectedText').value = '';
+    });
+
+    // e) Додати нове речення перед виділеним (або в кінець останнього параграфа)
+    document.getElementById('addBeforeSelectedBtn').addEventListener('click', () => {
+      const val = document.getElementById('newSentenceText').value.trim();
+      if (!val) { alert('Введіть текст нового речення'); return; }
+      const newS = document.createElement('span');
+      newS.textContent = val;
+
+      if (selectedSpan) {
+        selectedSpan.parentNode.insertBefore(newS, selectedSpan);
+      } else {
+        const lastP = ensureLastParagraphExists();
+        lastP.appendChild(newS);
+      }
+      document.getElementById('newSentenceText').value = '';
+    });
+
+    // f) Видалити виділене речення (і параграф, якщо він спорожнів)
+    document.getElementById('deleteSelectedBtn').addEventListener('click', () => {
+      if (!selectedSpan) { alert('Немає виділеного речення'); return; }
+      const p = selectedSpan.parentNode;
+      selectedSpan.remove();
+      clearSelection();
+      if (p.querySelectorAll('span').length === 0) {
+        p.remove();
+      }
+    });
+
+    // g) Видалити заданий параграф
+    document.getElementById('deleteParagraphBtn').addEventListener('click', () => {
+      const pIdx = parseInt(document.getElementById('paraIndexForDelete').value, 10);
+      const p = getParagraph(pIdx);
+      if (!p) { alert('Параграф не знайдено'); return; }
+      // якщо виділене речення було в цьому параграфі — зняти виділення
+      if (selectedSpan && selectedSpan.closest('p') === p) {
+        clearSelection();
+      }
+      p.remove();
+      document.getElementById('paraIndexForDelete').value = '';
+    });
+
+    textRoot.addEventListener('click', (e) => {
+      if (e.target.tagName.toLowerCase() === 'span') {
+        selectSpan(e.target);
+      }
+    });
+  </script>
+</body>
+</html>
