@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>[B]03.03</title>
+    <style>
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align:center;">🎉 Випадковий мем</h1>
+    <div style="text-align:center;">
+        <img id="meme" src="" alt="Мем завантажується..." />
+    </div>
+
+    <script>
+        async function fetchMemes() {
+            try {
+                const response = await fetch('https://api.imgflip.com/get_memes');
+                const json = await response.json();
+
+                if (json.success) {
+                    const memes = json.data.memes;
+                    const randomIndex = Math.floor(Math.random() * memes.length);
+                    const memeUrl = memes[randomIndex].url;
+
+                    document.getElementById('meme').src = memeUrl;
+                } else {
+                    console.error("API повернуло success: false");
+                }
+            } catch (error) {
+                console.error("Помилка при отриманні мему:", error);
+            }
+        }
+
+        fetchMemes();
+
+        setInterval(fetchMemes, 10000);
+    </script>
+</body>
+</html>

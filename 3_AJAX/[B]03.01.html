@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>[B]03.01</title>
+</head>
+<body>
+    <h1>Перевірка виконання Promise.any()</h1>
+    <p id="result">Очікуємо результат...</p>
+
+    <script>
+        function asyncFunction1() {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    if (Math.random() < 0.5) {
+                        reject(new Error("Щось пішло не так..."));
+                    } else {
+                        resolve("Функція 1 виконалась успішно");
+                    }
+                }, 1000);
+            });
+        }
+
+        function asyncFunction2() {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    if (Math.random() < 0.5) {
+                        reject(new Error("Щось пішло не так..."));
+                    } else {
+                        resolve("Функція 2 виконалась успішно");
+                    }
+                }, 1000);
+            });
+        }
+
+        Promise.any([asyncFunction1(), asyncFunction2()])
+            .then(result => {
+                document.getElementById("result").textContent = "Успіх: " + result;
+            })
+            .catch(error => {
+                document.getElementById("result").textContent = "Всі обіцянки були відхилені";
+            });
+    </script>
+</body>
+</html>
