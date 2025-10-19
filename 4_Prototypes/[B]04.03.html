@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>[B]04.03</title>
+</head>
+<body>
+<h2>Дитячий подарунок (Present)</h2>
+<pre id="output"></pre>
+
+<script>
+    function Candy(name, weight, volume) {
+        this.name = name;
+        this.weight = weight;
+        this.volume = volume;
+    }
+
+    Candy.prototype.getSugar = function () {
+        return this.volume * 0.5;
+    };
+
+    Candy.prototype.toString = function () {
+        return `${this.name} (вага: ${this.weight}г, цукор: ${this.getSugar().toFixed(2)}г)`;
+    };
+
+    function ChocolateCandy(name, weight, volume) {
+        Candy.call(this, name, weight, volume);
+    }
+    ChocolateCandy.prototype = Object.create(Candy.prototype);
+    ChocolateCandy.prototype.constructor = ChocolateCandy;
+    ChocolateCandy.prototype.getSugar = function () {
+        return this.volume * 0.8;
+    };
+
+    function CaramelCandy(name, weight, volume) {
+        Candy.call(this, name, weight, volume);
+    }
+    CaramelCandy.prototype = Object.create(Candy.prototype);
+    CaramelCandy.prototype.constructor = CaramelCandy;
+    CaramelCandy.prototype.getSugar = function () {
+        return this.volume * 0.6;
+    };
+
+    function JellyCandy(name, weight, volume) {
+        Candy.call(this, name, weight, volume);
+    }
+    JellyCandy.prototype = Object.create(Candy.prototype);
+    JellyCandy.prototype.constructor = JellyCandy;
+    JellyCandy.prototype.getSugar = function () {
+        return this.volume * 0.4;
+    };
+
+    function Present(maxWeight) {
+        this.maxWeight = maxWeight;
+        this.candies = [];
+    }
+
+    Present.prototype.addCandy = function (candy) {
+        const currentWeight = this.candies.reduce((sum, c) => sum + c.weight, 0);
+        if (currentWeight + candy.weight <= this.maxWeight) {
+            this.candies.push(candy);
+        }
+    };
+
+    Present.prototype.findBySugar = function (min, max) {
+        return this.candies.filter(c => c.getSugar() >= min && c.getSugar() <= max);
+    };
+
+    Present.prototype.toString = function () {
+        return this.candies.map(c => c.toString()).join("\n");
+    };
+
+    const candy1 = new ChocolateCandy("Milka", 50, 30);
+    const candy2 = new CaramelCandy("Барбарис", 30, 20);
+    const candy3 = new JellyCandy("Мармелад Рошен", 40, 25);
+    const candy4 = new ChocolateCandy("Snickers", 80, 50);
+
+    const present = new Present(150);
+    present.addCandy(candy1);
+    present.addCandy(candy2);
+    present.addCandy(candy3);
+    present.addCandy(candy4);
+
+    let output = "Подарунок містить:\n" + present.toString();
+    output += "\n\nЦукерки з цукром 15–30г:\n";
+    output += present.findBySugar(15, 30).join("\n");
+
+    document.getElementById("output").textContent = output;
+</script>
+</body>
+</html>

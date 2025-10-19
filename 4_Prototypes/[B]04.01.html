@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>[B]04.01</title>
+</head>
+<body>
+  <h1>Перевірка Object.prototype.size()</h1>
+  <pre id="out"></pre>
+
+  <script>
+    Object.defineProperty(Object.prototype, "size", {
+      value: function () {
+        return Object.keys(this).filter(k => typeof this[k] !== "function").length;
+      },
+      enumerable: false
+    });
+
+    const user = {
+      name: "Alice",
+      age: 25,
+      sayHi() { console.log("Hi"); }
+    };
+
+    const car = { brand: "Toyota", model: "Corolla", year: 2020 };
+
+    function Person(firstName, lastName) {
+      this.firstName = firstName;
+      this.lastName = lastName;
+      this.getFullName = function () { return `${this.firstName} ${this.lastName}`; };
+    }
+    const person = new Person("John", "Doe");
+
+    const results = [
+      `user.size() = ${user.size()}   // очікуємо 2: name, age`,
+      `car.size()  = ${car.size()}    // очікуємо 3: brand, model, year`,
+      `person.size() = ${person.size()} // очікуємо 2: firstName, lastName`
+    ];
+
+    console.log(results.join("\n"));
+    document.getElementById("out").textContent = results.join("\n");
+  </script>
+</body>
+</html>
