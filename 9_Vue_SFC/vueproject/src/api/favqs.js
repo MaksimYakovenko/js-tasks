@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "https://favqs.com/api";
+const API_BASE_URL = "/api";
 
 export async function fetchQuotes(page = 1) {
     console.log("REQUEST TO:", `${API_BASE_URL}/quotes?page=${page}`);
