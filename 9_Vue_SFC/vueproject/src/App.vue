@@ -1,47 +1,55 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
+  <div class="app">
+    <header class="app-header">
+      <h1>FavQs Quotes</h1>
+      <nav class="nav">
+        <RouterLink to="/">Quotes list</RouterLink>
+        <RouterLink to="/random">Random quote</RouterLink>
+      </nav>
+    </header>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+    <main class="app-main">
+      <RouterView />
+    </main>
+  </div>
 </template>
 
+<script setup>
+</script>
+
 <style scoped>
-header {
-  line-height: 1.5;
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+.app-header {
+  background: #42b883;
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
+.nav {
+  display: flex;
+  gap: 1rem;
+}
 
-  .logo {
-    margin: 0 2rem 0 0;
-  }
+.nav a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+}
 
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+.nav a.router-link-active {
+  text-decoration: underline;
+}
+
+.app-main {
+  padding: 2rem;
 }
 </style>
